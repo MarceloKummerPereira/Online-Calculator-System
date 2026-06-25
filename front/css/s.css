@@ -35,6 +35,12 @@ h2 {
     margin-bottom: 35px;
 }
 
+h3 {
+    color: white;
+    font-size: 18px;
+    margin: 28px 0 14px;
+}
+
 .container input {
     width: 100%;
 

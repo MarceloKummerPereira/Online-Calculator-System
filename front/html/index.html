@@ -17,6 +17,14 @@
 
     <h1>99%</h1>
 
+    <label>Expressao numerica</label>
+
+    <input
+        type="text"
+        id="expression"
+        placeholder="Ex: (2 + 3) * 4"
+    >
+
     <label>Primeiro número</label>
 
     <input
@@ -52,8 +60,12 @@
             Raiz Quadrada (√)
         </option>
 
-        <option value="log">
-            Logaritmo Base 10 (log)
+        <option value="^">
+            Potência (^)
+        </option>
+
+        <option value="root">
+            Raiz n-esima
         </option>
 
     </select>
@@ -84,6 +96,14 @@
     </button>
 
     <ul id="history"></ul>
+
+    <h3>Ranking de operacoes</h3>
+
+    <button onclick="loadRanking()">
+        Atualizar Ranking
+    </button>
+
+    <ul id="ranking"></ul>
 
     <button onclick="logout()">
         Sair

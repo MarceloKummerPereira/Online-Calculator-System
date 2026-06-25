@@ -37,6 +37,10 @@ async function register() {
     const nome = document.getElementById("registerUsername").value;
     const email = document.getElementById("registerEmail").value;
     const senha = document.getElementById("registerPassword").value;
+    const instituicao = document.getElementById("registerInstituicao").value;
+    const escolaridade = document.getElementById("registerEscolaridade").value;
+    const endereco = document.getElementById("registerEndereco").value;
+    const tipo_usuario = document.getElementById("registerTipo").value;
 
     try {
         const response = await fetch(`${API}/cadastro`, {
@@ -47,7 +51,11 @@ async function register() {
             body: JSON.stringify({
                 nome,
                 email,
-                senha
+                senha,
+                instituicao,
+                escolaridade,
+                endereco,
+                tipo_usuario
             })
         });
 
@@ -67,6 +75,7 @@ async function register() {
 }
 
 async function calculate() {
+    const expressao = document.getElementById("expression").value.trim();
     const numero1 = Number(document.getElementById("a").value);
     const numero2 = Number(document.getElementById("b").value);
     const operador = document.getElementById("operation").value;
@@ -79,17 +88,21 @@ async function calculate() {
     }
 
     try {
+        const body = expressao
+            ? { expressao }
+            : {
+                numero1,
+                numero2,
+                operador
+            };
+
         const response = await fetch(`${API}/calcular`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({
-                numero1,
-                numero2,
-                operador
-            })
+            body: JSON.stringify(body)
         });
 
         const data = await response.json();
@@ -99,6 +112,7 @@ async function calculate() {
                 `Resultado: ${data.calculo.resultado}`;
 
             loadHistory();
+            loadRanking();
         } else {
             alert(data.erro || "Erro ao calcular");
         }
@@ -154,6 +168,56 @@ async function loadHistory() {
     }
 }
 
+async function loadRanking() {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API}/ranking-operacoes`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        const ranking = document.getElementById("ranking");
+
+        if (!ranking) {
+            return;
+        }
+
+        ranking.innerHTML = "";
+
+        if (!response.ok) {
+            ranking.innerHTML = "<li>Erro ao carregar ranking.</li>";
+            return;
+        }
+
+        if (data.ranking.length === 0) {
+            ranking.innerHTML = "<li>Nenhuma operacao realizada ainda.</li>";
+            return;
+        }
+
+        data.ranking.forEach((item, index) => {
+            const li = document.createElement("li");
+
+            li.innerText =
+                `${index + 1}. ${item.tipo_operacao}: ${item.total} vez(es)`;
+
+            ranking.appendChild(li);
+        });
+
+    } catch (err) {
+        console.log(err);
+        alert("Erro ao carregar ranking");
+    }
+}
+
 function toggleSecondInput() {
 
     const operation =
@@ -164,10 +228,7 @@ function toggleSecondInput() {
             'secondInputContainer'
         );
 
-    if (
-        operation === 'sqrt' ||
-        operation === 'log'
-    ) {
+    if (operation === 'sqrt') {
 
         secondInput.style.display = 'none';
 
@@ -185,5 +246,6 @@ function logout() {
 document.addEventListener("DOMContentLoaded", () => {
     if (document.getElementById("history")) {
         loadHistory();
+        loadRanking();
     }
 });

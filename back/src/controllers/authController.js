@@ -8,14 +8,22 @@ async function cadastro(request, reply) {
         const {
             nome,
             email,
-            senha
+            senha,
+            instituicao,
+            escolaridade,
+            endereco,
+            tipo_usuario
         } = request.body;
 
         const usuario =
             await authService.cadastrarUsuario(
                 nome,
                 email,
-                senha
+                senha,
+                instituicao,
+                escolaridade,
+                endereco,
+                tipo_usuario
             );
 
         reply.send({

@@ -6,7 +6,11 @@ const pool = require('../config/database');
 async function cadastrarUsuario(
     nome,
     email,
-    senha
+    senha,
+    instituicao,
+    escolaridade,
+    endereco,
+    tipoUsuario
 ) {
 
     const senhaCriptografada =
@@ -15,13 +19,21 @@ async function cadastrarUsuario(
     const resultado = await pool.query(
         `
         INSERT INTO usuarios
-        (nome, email, senha)
+        (nome, email, senha, instituicao, escolaridade, endereco, tipo_usuario)
 
-        VALUES ($1, $2, $3)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
 
-        RETURNING id, nome, email
+        RETURNING id, nome, email, tipo_usuario
         `,
-        [nome, email, senhaCriptografada]
+        [
+            nome,
+            email,
+            senhaCriptografada,
+            instituicao || null,
+            escolaridade || null,
+            endereco || null,
+            tipoUsuario || 'gratuito'
+        ]
     );
 
     return resultado.rows[0];
@@ -60,7 +72,8 @@ async function loginUsuario(
         {
             id: usuario.id,
             nome: usuario.nome,
-            email: usuario.email
+            email: usuario.email,
+            tipo_usuario: usuario.tipo_usuario
         },
         process.env.JWT_SECRET,
         {

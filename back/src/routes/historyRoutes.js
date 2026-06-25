@@ -13,6 +13,14 @@ async function historyRoutes(fastify) {
         },
         historyController.listarHistorico
     );
+
+    fastify.get(
+        '/ranking-operacoes',
+        {
+            preHandler: authMiddleware
+        },
+        historyController.listarRankingOperacoes
+    );
 }
 
 module.exports = historyRoutes;

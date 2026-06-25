@@ -26,6 +26,32 @@ async function listarHistorico(
     }
 }
 
+async function listarRankingOperacoes(
+    request,
+    reply
+) {
+
+    try {
+
+        const ranking =
+            await historyService.buscarRankingOperacoes(
+                request.usuario.id
+            );
+
+        reply.send({
+            usuario: request.usuario.nome,
+            ranking
+        });
+
+    } catch (erro) {
+
+        reply.code(500).send({
+            erro: 'Erro ao buscar ranking'
+        });
+    }
+}
+
 module.exports = {
-    listarHistorico
+    listarHistorico,
+    listarRankingOperacoes
 };
